@@ -9,7 +9,7 @@ public class CardTest {
 		
 		Deck myDeck= new Deck();
 		myDeck.buildDeck();
-		myDeck.shuffle();
+		for(int i=0;i<1;++i)myDeck.shuffle();
 		
 	}
 	

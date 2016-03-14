@@ -45,6 +45,7 @@ public class List<T> implements ListInterface<T>{
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T remove(int givenPosition) {
 		node next = HEAD.next;
