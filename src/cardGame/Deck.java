@@ -37,6 +37,33 @@ public class  Deck {
     	}
     }
     
+    public List<Card> split(){
+    	List<Card> deck1 = new List<Card>();
+    	List<Card> deck2 = new List<Card>();
+    	int i =0;
+    	while(i<stdDeck.getLength()/2){
+    		deck1.add(stdDeck.getEntry(i));
+    		i++;
+    	}
+    	while(i<52){
+    		deck2.add(stdDeck.getEntry(i));
+    		i++;
+    	}
+    	
+    	for(int j=0;j<deck1.getLength();j++){
+    		deck2.add(deck1.getEntry(j));
+    	}
+    	
+    	
+    	for (int b=0;b<deck2.getLength();b++){
+    		System.out.println(deck2.getEntry(b).toString());
+    	}
+    	
+    	return deck2;
+    	
+    	
+    }
+    
     
     
     

@@ -9,7 +9,8 @@ public class CardTest {
 		
 		Deck myDeck= new Deck();
 		myDeck.buildDeck();
-		for(int i=0;i<1;++i)myDeck.shuffle();
+		myDeck.split();
+		
 		
 	}
 	
