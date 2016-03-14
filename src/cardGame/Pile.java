@@ -7,9 +7,20 @@ import java.util.Random;
 
 public class  Pile{
     
-    List<Card> stdDeck = new List<Card>();
-
+    protected List<Card> stdDeck = new List<Card>();    
     
+    public void add(Card c) {
+    	stdDeck.add(c);
+    }
+    public Card getTopCard() {
+    	return stdDeck.getEntry(0);
+    }
+    public void addToTop(Card c) {
+    	stdDeck.add(0, c);
+    }
+    public int getNumCards() {
+    	return stdDeck.getLength();
+    }
     public void shuffle(){
     	
     	List<Card> newDeck = new List<Card>();
@@ -25,7 +36,6 @@ public class  Pile{
     	}
     	stdDeck=newDeck;
     }
-    
     public List<Card> split(){
     	List<Card> deck1 = new List<Card>();
     	List<Card> deck2 = new List<Card>();
@@ -85,10 +95,5 @@ public class  Pile{
     	 for(int i=0;i<stdDeck.getLength();i++) System.out.println(stdDeck.getEntry(i).toString());
 	}
     
-    
-    
-    
-   
-		
 }
 
