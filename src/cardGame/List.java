@@ -117,6 +117,7 @@ public class List<T> implements ListInterface<T>{
 	@Override
 	public boolean contains(T anEntry) {
 		node next = HEAD.next;
+		if(next==null)return false;
 		while(next.next!=null){
 				if(next.val.equals(anEntry))return true;
 			next=next.next;
