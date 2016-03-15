@@ -19,7 +19,7 @@ public class HeartsGame {
 	HeartsPlayer winner;
 	boolean heartsBroken;
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		HeartsGame game = new HeartsGame();
 		game.playGame();
 		
@@ -48,7 +48,7 @@ public class HeartsGame {
 				// play continues until a PLAYER reaches 100 POINTS
 				// PLAYER with the LOWEST SCORE wins
 		
-	}
+	}*/
 	public HeartsGame() {
 		baseDeck = new Deck();
 		players = new HeartsPlayer[4];
