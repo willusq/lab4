@@ -1,5 +1,8 @@
 package cardGame;
 
+import java.util.Scanner;
+
+import cardGame.Card.CardRank;
 import cardGame.Card.CardSuit;
 
 public class HeartsPlayer {
@@ -9,21 +12,28 @@ public class HeartsPlayer {
 	int score;
 	
 	public HeartsPlayer() {
-		
+		name = "No Name";
+		hand = new Hand();
+		cardsTaken = new Pile();
+		score = 0;
 	}
 	public HeartsPlayer(String n) {
 		name = n;
 		hand = new Hand();
+		cardsTaken = new Pile();
+		score = 0;
 	}
 	public HeartsPlayer(String n, Hand h) {
 		name = n;
 		hand = h;
+		cardsTaken = new Pile();
+		score = 0;
 	}
 	public void setHand(Hand h) {
 		hand = h;
 	}
 	public boolean handContains (Card c) {
-		return false;
+		return hand.containsCard(c);
 	}
 	public Card chooseCards (int num) {
 		return null;
@@ -32,15 +42,156 @@ public class HeartsPlayer {
 		return score;
 	}
 	public void addPoints(int points) {
-		
+		score+=points;
 	}
 	public void addToHand(Card c) {
-		hand.add(c);                                 
+		hand.addToBottom(c);                                 
 	}
 	public String getName() {
 		return name;
 	}
-	private boolean checkSuit(CardSuit s) {
-		return true;
+	public void printHand() {
+		hand.print();
+	}
+	public void sortHand () {
+		hand.sort();
+	}
+	private boolean checkSuit(Card card, CardSuit s, boolean hearts) {
+		
+		// is new leading suit?
+		if(s == null) {
+			// trying to lead hearts?
+			if(card.getSuit() != CardSuit.HEARTS)
+				return true;
+			else if(card.getSuit() == CardSuit.HEARTS) {
+				// hearts broken?
+				if(hearts)
+					return true;
+				else if(!hearts) {
+					// have other suits?
+					return(!(((hand.containsSuit(CardSuit.CLUBS)) || 
+							(hand.containsSuit(CardSuit.DIAMONDS)) || 
+							(hand.containsSuit(CardSuit.SPADES)))));
+				}
+			}
+		}
+		else if (s != null) {
+			// playing leading suit?
+			if(card.getSuit() == s)
+				return true;
+			else {
+				// have leading suit?
+				return(!(hand.containsSuit(s)));
+			}
+		}
+		return false;
+	}
+	public void pass(HeartsPlayer player, String direction) {
+		Card[] cards = new Card[3];
+		
+		/* 
+		 * one concern may be displaying hands before/after passing
+		 * current it displays all hands before doing any passing
+		 * could print individually but must distinguish between original hand
+		 * and hand after being passed cards
+		 * whose job is this?
+		 */
+		
+		System.out.println(name);
+		System.out.println("Choose 3 cards to pass " + direction + " to " + player.getName());
+		
+		for(int i = 0; i < 3; i++) {
+			cards[i] = pickCard();
+			
+			// add to other player's hand
+			player.addToHand(cards[i]);
+			
+			// remove from hand
+			moveToTop(cards[i]);
+			hand.removeCardAt(0);
+			
+			System.out.println("You passed the " + cards[i].toString());
+		}
+
+		System.out.println();
+	}
+	// used for user input to confirm card is in player's hand
+	private Card verifyCard(Card c) {
+		Scanner input = new Scanner(System.in);
+		Card outCard = c;
+		String inRank;
+		String inSuit;
+		
+		while(!(hand.containsCard(outCard))) {
+			System.out.println("The " + outCard.toString().toLowerCase() + " is not in your hand, try again. Enter card in the form [rank suit]");
+			inRank = input.next();
+			inSuit = input.next();
+			outCard = Card.getFromString(inRank, inSuit);
+		}
+		
+		return outCard;
+		
+	}
+	private void moveToTop(Card c) {
+		for(int i = 0; i < hand.getNumCards(); i++) {
+			if(c.equals(hand.getCard(i)))
+				hand.removeCardAt(i);
+		}
+		hand.addToTop(c);
+	}
+	public Card startHand() {
+		hand.sort();
+		hand.print();
+		Card twoClubs = new Card(CardRank.TWO, CardSuit.CLUBS);
+		System.out.print("Press any key to play the two of clubs and begin the hand. ");
+		new Scanner(System.in).nextLine();
+		hand.removeCardAt(0);
+		return twoClubs;
+	}
+	public Card playCard(CardSuit leadSuit, boolean hearts) {
+		hand.sort();
+		System.out.println("your hand");
+		hand.print();
+		boolean run = true;
+		Card card = null;
+		
+		while(run) {
+			card = pickCard();
+			run = !checkSuit(card, leadSuit, hearts);
+		}
+		
+		moveToTop(card);
+		hand.removeCardAt(0);
+		
+		System.out.println();
+		
+		return card;
+	}
+	public void takeTrick(Card[] trick) {
+		System.out.println(name + " takes the trick");
+		for(int i = 0; i < trick.length; i++)
+			cardsTaken.addToBottom(trick[i]);
+	}
+	private Card pickCard() {
+		Scanner input = new Scanner(System.in);
+		boolean valid = false;
+		String inRank;
+		String inSuit;
+		Card card = new Card();
+		
+		while(valid == false) {
+			System.out.print("Enter card in the form [rank suit]: ");
+			inRank = input.next();
+			inSuit = input.next();
+			card = Card.getFromString(inRank, inSuit);
+			
+			if((card.getRank() != null) && (card.getSuit() != null))
+				valid = true;
+		}
+		
+		// make sure card is in this player's hand
+		card = verifyCard(card);
+		
+		return card;
 	}
 }

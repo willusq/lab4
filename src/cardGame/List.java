@@ -1,8 +1,23 @@
 package cardGame;
 public class List<T> implements ListInterface<T>{
 	
-	node HEAD=new node(null,null,null);
-	node TAIL=new node(null,null,null);
+	node HEAD;
+	node TAIL;
+	
+	class node<T>{
+		node next,prev;
+		T val;
+		public node(node n,node p,T v){
+			next=n;
+			prev=p;
+			val=v;
+		}
+	}
+	
+	public List () {
+		HEAD=new node(null,null,null);
+		TAIL=new node(null,null,null);
+	}
 	@Override
 	public void add(T newEntry) {
 		node tmp = new node(null,null,newEntry);
@@ -130,6 +145,10 @@ public class List<T> implements ListInterface<T>{
 		node next = HEAD.next;
 		int i=0;
 		
+		// if there is only one element
+		if((next != null) && (next.next == null))
+			i = 1;
+		
 		while(next.next!=null){
 			++i;
 			next=next.next;
@@ -142,11 +161,11 @@ public class List<T> implements ListInterface<T>{
 		if(HEAD.next==null)return true;
 		return false;
 	}
-
-
 	@Override
 	public void display() {
 		node next = HEAD.next;
+		if(next.next == null)
+			System.out.println(next.val.toString());
 		while(next.next!=null){
 			System.out.println(next.val.toString());
 			next=next.next;
@@ -155,13 +174,4 @@ public class List<T> implements ListInterface<T>{
 		
 	}
 
-}
-class node<T>{
-	node next,prev;
-	T val;
-	public node(node n,node p,T v){
-		next=n;
-		prev=p;
-		val=v;
-	}
 }

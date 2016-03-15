@@ -9,7 +9,10 @@ public class  Pile{
     
     protected List<Card> stdDeck = new List<Card>();    
     
-    public void add(Card c) {
+    public Pile() {
+    	stdDeck = new List<Card>();
+    }
+    public void addToBottom(Card c) {
     	stdDeck.add(c);
     }
     public Card getTopCard() {
@@ -21,6 +24,27 @@ public class  Pile{
     public int getNumCards() {
     	return stdDeck.getLength();
     }
+    public Card getCard(int pos) {
+    	return stdDeck.getEntry(pos);
+    }
+    public void removeCardAt(int pos) {
+    	stdDeck.remove(pos);
+    }
+    public boolean containsCard(Card c) {
+    	return stdDeck.contains(c);
+    }
+    public boolean containsSuit(CardSuit s) {
+    	Card current;
+    	for(int i = 0; i < stdDeck.getLength(); i++) {
+    		current = stdDeck.getEntry(i);
+    		if(current.getSuit() == s)
+    			return true;
+    	}
+    	return false;
+    }
+    public void print() {
+    	stdDeck.display();
+    }
     public void shuffle(){
     	
     	List<Card> newDeck = new List<Card>();
@@ -31,7 +55,7 @@ public class  Pile{
     		Card temp=stdDeck.getEntry(randomCard);
     		stdDeck.remove(randomCard);
     		newDeck.add(temp);
-    		System.out.println(newDeck.getEntry(i).toString());
+    		//System.out.println(i + newDeck.getEntry(i).toString());
     		
     	}
     	stdDeck=newDeck;
@@ -66,33 +90,34 @@ public class  Pile{
     	List<Card> out=new List<Card>();
     	//for(int i=0;i<stdDeck.getLength();i++) System.out.println(stdDeck.getEntry(i).toString());
     	//System.out.println("==============");
-    	System.out.println(stdDeck.getLength());
+    	//System.out.println(stdDeck.getLength());
+
+		 List<Card> currSuit=new List<Card>();
     	 for(CardSuit newSuit: CardSuit.values()) {
     		 
-    		 List<Card> currSuit=new List<Card>();
-    		 currSuit.clear();System.out.println(currSuit.toString());
+    		 currSuit.clear();
+    		
     		 for(int i=0;i<stdDeck.getLength();++i){
     			 Card tmp1=stdDeck.getEntry(i);
-    			 System.out.println(tmp1.toString());
+    		//	 System.out.println(tmp1.toString());
     			 if(newSuit.equals(tmp1.getSuit())){
     				 currSuit.add(tmp1);
     			 }
     			 
     		 }
-				for(CardRank newRank: CardRank.values()) {
-					for(int i=0;i<currSuit.getLength();++i){
-		    			 Card tmp1=currSuit.getEntry(i);
-		    			 if(newRank.equals(tmp1.getRank())){
-		    				 out.add(tmp1);
-		    			 }
-		    			 
-		    		 }
-					 
-					 
-				}
+    		 	if(!currSuit.isEmpty()) {
+					for(CardRank newRank: CardRank.values()) {
+						for(int i=0;i<currSuit.getLength();++i){
+			    			 Card tmp1=currSuit.getEntry(i);
+			    			 if(newRank.equals(tmp1.getRank())){
+			    				 out.add(tmp1);
+			    			 }
+			    		 }
+					}
+    		 	}
     	 }
     	 stdDeck=out;
-    	 for(int i=0;i<stdDeck.getLength();i++) System.out.println(stdDeck.getEntry(i).toString());
+    //	 for(int i=0;i<stdDeck.getLength();i++) System.out.println(stdDeck.getEntry(i).toString());
 	}
     
 }
