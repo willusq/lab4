@@ -27,8 +27,8 @@ public class  Pile{
     public Card getCard(int pos) {
     	return stdDeck.getEntry(pos);
     }
-    public void removeCardAt(int pos) {
-    	stdDeck.remove(pos);
+    public Card removeCardAt(int pos) {
+    	return stdDeck.remove(pos);
     }
     public boolean containsCard(Card c) {
     	return stdDeck.contains(c);
@@ -43,7 +43,11 @@ public class  Pile{
     	return false;
     }
     public void print() {
-    	stdDeck.display();
+    	if(stdDeck.getLength() > 0)
+    		stdDeck.display();
+    }
+    public void clear () {
+    	stdDeck.clear();
     }
     public void shuffle(){
     	
@@ -76,7 +80,6 @@ public class  Pile{
     	for(int j=0;j<deck1.getLength();j++){
     		deck2.add(deck1.getEntry(j));
     	}
-    	
     	
     	for (int b=0;b<deck2.getLength();b++){
     		System.out.println(deck2.getEntry(b).toString());

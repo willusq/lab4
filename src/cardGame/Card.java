@@ -8,22 +8,8 @@ import cardGame.Card.CardSuit;
 
 public class Card implements Comparable<Card> {
 	
-	// should be imported into other classes? rather than using strings
-	public enum CardRank { 
-		TWO("2"), THREE("3"), FOUR("4"), FIVE("5"), SIX("6"), SEVEN("7"), EIGHT("8"),
-		NINE("9"), TEN("10"), JACK("J"), QUEEN("Q"), KING("K"), ACE("A");
-		private String symbol;
-		CardRank(String s){ 
-			symbol = s;
-			}
-	};
-	public enum CardSuit { 
-		CLUBS('C'), DIAMONDS('D'), HEARTS('H'), SPADES('S');
-		private char symbol;
-		CardSuit(char s) {
-			symbol = s;
-		}
-	};
+	public enum CardRank { 	TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING, ACE };
+	public enum CardSuit { CLUBS, DIAMONDS, HEARTS, SPADES };
 	
 	private CardRank rank;
 	private CardSuit suit;

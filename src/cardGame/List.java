@@ -67,8 +67,10 @@ public class List<T> implements ListInterface<T>{
 		int i=0;
 		if(givenPosition==0){
 			node tmp=HEAD.next;
-			HEAD.next=tmp.next;
-			tmp.next.prev=HEAD;
+			if(tmp.next != null) {
+				HEAD.next=tmp.next;
+				tmp.next.prev=HEAD;
+			}
 			return (T) tmp.val;
 		}
 		while(next.next!=null){
@@ -133,6 +135,8 @@ public class List<T> implements ListInterface<T>{
 	public boolean contains(T anEntry) {
 		node next = HEAD.next;
 		if(next==null)return false;
+		else if((next != null) && (next.next == null))
+			return next.val.equals(anEntry);
 		while(next.next!=null){
 				if(next.val.equals(anEntry))return true;
 			next=next.next;
@@ -146,12 +150,14 @@ public class List<T> implements ListInterface<T>{
 		int i=0;
 		
 		// if there is only one element
-		if((next != null) && (next.next == null))
-			i = 1;
+		if(next != null) {
+			if (next.next == null)
+				i = 1;
 		
-		while(next.next!=null){
-			++i;
-			next=next.next;
+			while(next.next!=null){
+				++i;
+				next=next.next;
+			}
 		}
 		return i;
 	}
@@ -164,14 +170,12 @@ public class List<T> implements ListInterface<T>{
 	@Override
 	public void display() {
 		node next = HEAD.next;
-		if(next.next == null)
+		if((next != null) && (next.next == null))
 			System.out.println(next.val.toString());
 		while(next.next!=null){
 			System.out.println(next.val.toString());
 			next=next.next;
 		}
-		// TODO Auto-generated method stub
-		
 	}
 
 }

@@ -14,8 +14,7 @@ public class HeartsGame {
 	int handsFinished;
 	int cpi; // current player index
 	CardSuit leadingSuit;
-	HeartsPlayer dealer;
-	HeartsPlayer winner;
+	int winner;
 	boolean firstTrick;
 	boolean heartsBroken;
 	
@@ -60,7 +59,9 @@ public class HeartsGame {
 		cpi = findTwoOfClubs();
 	}
 	public void playGame() {
-	//	while(!gameOver) {
+		while(!gameOver()) {
+			if(handsFinished != 0)
+				baseDeck.buildDeck();
 			shuffleAndDeal();
 			printPlayersHands();
 			passCards();
@@ -73,7 +74,25 @@ public class HeartsGame {
 			for(int i = 0; i < 13; i++) {
 				playTrick();
 			}
-	//	}
+			
+			scoreHand();
+			System.out.println("Total scores: ");
+			printScores();
+			System.out.println();
+			
+			handsFinished++;
+		}
+		findWinner();
+		System.out.println(players[winner].getName() + " wins!");
+	}
+	private int findTwoOfClubs() {
+		Card twoOfClubs = new Card(CardRank.TWO, CardSuit.CLUBS);
+		int playerIndex = -1;
+		for(int i = 0; i < 4; i++) {
+			if(players[i].handContains(twoOfClubs))
+				playerIndex = i;
+		}
+		return playerIndex;
 	}
 	private void shuffleAndDeal (){
 		// shuffle 3 times
@@ -81,15 +100,13 @@ public class HeartsGame {
 			baseDeck.shuffle();
 		
 		baseDeck.deal(players);
+		
+		for(int i = 0; i < 4; i++)
+			players[i].sortHand();
 	}
+	// pass cards in direction depending on round number
 	private void passCards () {
-		// pass cards in direction depending on round num:
-		// 	roundsFinished % 4 == 0 pass left
-		// 		0 to 1, 1 to 2, 2 to 3, 3 to 0
-		// 	roundsfinished % 4 == 1, pass right
-		// 		0 to 3, 3 to 2, 2 to 1, 1 to 0
-		// 	roundsFinished % 4 == 2, pass across
-		//		0 to 2, 2 to 0, 3 to 1, 1 to 3
+		// 	pass left: 0 to 1, 1 to 2, 2 to 3, 3 to 0
 		String direction;
 		if ((handsFinished % 4) == 0 ) {
 			direction = "left";
@@ -98,6 +115,7 @@ public class HeartsGame {
 			for(int i = 0; i < 3; i++) 
 				players[i].pass(players[i + 1], direction);
 		} 
+		// 	pass right: 0 to 3, 3 to 2, 2 to 1, 1 to 0
 		else if ((handsFinished % 4) == 1) {
 			direction = "right";
 			// pass to the right
@@ -105,6 +123,7 @@ public class HeartsGame {
 			for (int i = 3; i > 0; i--) 
 				players[i].pass(players[i - 1], direction);
 		}
+		//	pass across: 0 to 2, 2 to 0, 3 to 1, 1 to 3
 		else if((handsFinished % 4) == 2) {
 			direction = "across";
 			 // pass across
@@ -113,16 +132,19 @@ public class HeartsGame {
 			for(int i = 3; i > 1; i--)
 				players[i].pass(players[i - 2], direction);
 		}
+		// fourth round: no passing
 	}
 	private void playTrick () {
 		Card current;
 		Card[] trick = new Card[4];
 		int highCard = -1;
 		leadingSuit = null;
-		System.out.println(cpi);
-		// starts at current player and goes to each
+		
+		// starts at current player and play moves clockwise
 		for(int j = 0; j < 4; j++) {
 			System.out.println(players[cpi].getName());
+			
+			// two of clubs always played on first trick of hand
 			if(firstTrick) {
 				current = players[cpi].startHand();
 				trick[cpi] = current;
@@ -136,18 +158,21 @@ public class HeartsGame {
 				if((heartsBroken == false) && (current.getSuit() == CardSuit.HEARTS))
 					heartsBroken = true;
 				
+				// first card of trick
 				if(j == 0) {
 					leadingSuit = current.getSuit();
+					// first card plays is the high card by default
 					highCard = cpi;
 					trick[cpi] = current;
 				} else {
+					// adds each card to the trick array
 					trick[cpi] = current;
 					if((current.compareTo(trick[highCard]) > 0) && (current.getSuit() == leadingSuit))
 							highCard = cpi;
 				}
 			}
 			
-			System.out.println("trick");
+			System.out.println("Current trick: ");
 			for(int i = 0; i < trick.length; i++) {
 				if(trick[i] != null)
 					System.out.println(trick[i].toString());
@@ -161,37 +186,62 @@ public class HeartsGame {
 				cpi++;
 		}
 		
+		// player with high card takes trick and starts next trick
 		players[highCard].takeTrick(trick);
 		cpi = highCard;
 		
 		System.out.println();
 	}
-	private boolean checkMoonShot () {
-		return false;
-	}	
-	private int findTwoOfClubs() {
-		Card twoOfClubs = new Card(CardRank.TWO, CardSuit.CLUBS);
-		int playerIndex = -1;
+	private void scoreHand () {
+		int[] scores = new int[4];
+		boolean moonShot = false;
+		int moonShotPlayer = -1;
+		
 		for(int i = 0; i < 4; i++) {
-			if(players[i].handContains(twoOfClubs))
-				playerIndex = i;
+			scores[i] = players[i].scoreHand();
+			if(scores[i] == 26) {
+				moonShot = true;
+				moonShotPlayer = i;
+			}
 		}
-		return playerIndex;
+		if(moonShot == true) {
+			System.out.println(players[moonShotPlayer] + " shot the moon!");
+			for(int i = 0; i < 4; i++) {
+				if(i != moonShotPlayer)
+					players[i].addPoints(26);
+			}
+		}
+		else if (moonShot == false) {
+			System.out.println("Scores for this round: ");
+			for(int i = 0; i < 4; i++) {
+				players[i].addPoints(scores[i]);
+				System.out.println(players[i].getName() + ": " + scores[i]);
+			}
+		}
+		System.out.println();
 	}
 	private boolean gameOver() {
 		boolean hundredReached = false;
-		for(int i = 0; (i < 3) && (hundredReached == false); i++) {
-			if(players[i].getScore() >= 100) {
-				winner = players[i];
+		winner = 0;
+		for(int i = 0; (i < 4) && (hundredReached == false); i++) {
+			if(players[i].getScore() >= 100)
 				hundredReached = true;
-			}
 		}
 		return hundredReached;
+	}
+	private void findWinner() {
+		for(int j = 0; j < 4; j++) {
+			if(players[j].getScore() < players[winner].getScore())
+				winner = j;
+		}
+	}
+	private void printScores () {
+		for(int i = 0; i < 4; i++)
+			System.out.println(players[i].getName() + ": " + players[i].getScore());
 	}
 	private void printPlayersHands () {
 		for(int i = 0; i < 4; i++) {
 			System.out.println(players[i].getName());
-			players[i].sortHand();
 			players[i].printHand();
 			System.out.println();
 		}

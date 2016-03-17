@@ -13,6 +13,11 @@ public class CardTest {
 		myPile.addToBottom(card);
 		System.out.println(myPile.getNumCards());
 		myPile.print();
+		System.out.println(myPile.getCard(0));
+		System.out.println(myPile.containsCard(card));
+		System.out.println(myPile.getNumCards());
+		myPile.print();
+		
 	}
 	
 }

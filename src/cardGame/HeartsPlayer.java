@@ -35,9 +35,6 @@ public class HeartsPlayer {
 	public boolean handContains (Card c) {
 		return hand.containsCard(c);
 	}
-	public Card chooseCards (int num) {
-		return null;
-	}
 	public int getScore() {
 		return score;
 	}
@@ -69,6 +66,10 @@ public class HeartsPlayer {
 					return true;
 				else if(!hearts) {
 					// have other suits?
+					if(((hand.containsSuit(CardSuit.CLUBS)) || 
+							(hand.containsSuit(CardSuit.DIAMONDS)) || 
+							(hand.containsSuit(CardSuit.SPADES))))
+						System.out.println("Hearts have not yet been broken. ");
 					return(!(((hand.containsSuit(CardSuit.CLUBS)) || 
 							(hand.containsSuit(CardSuit.DIAMONDS)) || 
 							(hand.containsSuit(CardSuit.SPADES)))));
@@ -81,6 +82,8 @@ public class HeartsPlayer {
 				return true;
 			else {
 				// have leading suit?
+				if(hand.containsSuit(s))
+						System.out.println("You must play " + s.toString().toLowerCase());
 				return(!(hand.containsSuit(s)));
 			}
 		}
@@ -94,7 +97,6 @@ public class HeartsPlayer {
 		 * current it displays all hands before doing any passing
 		 * could print individually but must distinguish between original hand
 		 * and hand after being passed cards
-		 * whose job is this?
 		 */
 		
 		System.out.println(name);
@@ -143,7 +145,7 @@ public class HeartsPlayer {
 		hand.sort();
 		hand.print();
 		Card twoClubs = new Card(CardRank.TWO, CardSuit.CLUBS);
-		System.out.print("Press any key to play the two of clubs and begin the hand. ");
+		System.out.print("Press enter to play the two of clubs and begin the hand. ");
 		new Scanner(System.in).nextLine();
 		hand.removeCardAt(0);
 		return twoClubs;
@@ -171,6 +173,27 @@ public class HeartsPlayer {
 		System.out.println(name + " takes the trick");
 		for(int i = 0; i < trick.length; i++)
 			cardsTaken.addToBottom(trick[i]);
+	}
+	public int scoreHand() {
+		int handScore = 0;
+		System.out.println(name);
+		printCardsTaken();
+		System.out.println();
+		int numCards = cardsTaken.getNumCards();
+		
+		for (int i = 0; i < numCards; i++) {
+			if (cardsTaken.getCard(i).getSuit() == CardSuit.HEARTS)
+				handScore++;
+			else if(cardsTaken.getCard(i).equals(new Card(CardRank.QUEEN, CardSuit.SPADES)))
+				handScore += 13;
+		}
+		
+		cardsTaken.clear();
+		
+		return handScore;
+	}
+	public void printCardsTaken() {
+		cardsTaken.print();
 	}
 	private Card pickCard() {
 		Scanner input = new Scanner(System.in);
