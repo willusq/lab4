@@ -118,7 +118,7 @@ public class HeartsPlayer {
 		System.out.println();
 	}
 	// used for user input to confirm card is in player's hand
-	private Card verifyCard(Card c) {
+	protected Card verifyCard(Card c) {
 		Scanner input = new Scanner(System.in);
 		Card outCard = c;
 		String inRank;
@@ -134,7 +134,7 @@ public class HeartsPlayer {
 		return outCard;
 		
 	}
-	private void moveToTop(Card c) {
+	public void moveToTop(Card c) {
 		for(int i = 0; i < hand.getNumCards(); i++) {
 			if(c.equals(hand.getCard(i)))
 				hand.removeCardAt(i);
@@ -203,7 +203,7 @@ public class HeartsPlayer {
 		Card card = new Card();
 		
 		while(valid == false) {
-			System.out.print("Enter card in the form [rank suit]: ");
+			System.out.print("Enter card in th`e form [rank suit]: ");
 			inRank = input.next();
 			inSuit = input.next();
 			card = Card.getFromString(inRank, inSuit);
@@ -216,5 +216,9 @@ public class HeartsPlayer {
 		card = verifyCard(card);
 		
 		return card;
+	}
+	public void clearHand() {
+		hand.clear();
+		
 	}
 }

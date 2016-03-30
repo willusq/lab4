@@ -1,5 +1,7 @@
 package cardGame;
 
+import java.util.Scanner;
+
 import cardGame.Card.CardRank;
 import cardGame.Card.CardSuit;
 
@@ -19,8 +21,15 @@ public class HeartsGame {
 	boolean heartsBroken;
 	
 	public static void main(String[] args) {
-		HeartsGame game = new HeartsGame();
+		String n;
+		Scanner input = new Scanner(System.in);
+		
+		System.out.print("Enter your name: ");
+		n = input.nextLine();
+		
+		HeartsGame game = new HeartsGame(n);
 		game.playGame();
+		
 		
 		// FOR EACH HAND {
 		// deal cards
@@ -48,13 +57,13 @@ public class HeartsGame {
 				// PLAYER with the LOWEST SCORE wins
 		
 	}
-	public HeartsGame() {
+	public HeartsGame(String n) {
 		baseDeck = new Deck();
 		players = new HeartsPlayer[4];
-		players[0] = new HeartsPlayer("North");
-		players[1] = new HeartsPlayer("East");
-		players[2] = new HeartsPlayer("South");
-		players[3] = new HeartsPlayer("West");
+		players[0] = new AutoHeartsPlayer("North");
+		players[1] = new AutoHeartsPlayer("East");
+		players[2] = new HeartsPlayer(n);
+		players[3] = new AutoHeartsPlayer("West");
 		handsFinished = 0;
 		cpi = findTwoOfClubs();
 	}
@@ -63,9 +72,8 @@ public class HeartsGame {
 			if(handsFinished != 0)
 				baseDeck.buildDeck();
 			shuffleAndDeal();
-			printPlayersHands();
+			players[2].printHand();
 			passCards();
-			printPlayersHands();
 			
 			cpi = findTwoOfClubs();
 			firstTrick = true;
@@ -98,6 +106,9 @@ public class HeartsGame {
 		// shuffle 3 times
 		for(int i = 0; i < 3; i++)
 			baseDeck.shuffle();
+		
+		for(int i = 0; i < 4; i++)
+			players[i].clearHand();
 		
 		baseDeck.deal(players);
 		
@@ -168,7 +179,7 @@ public class HeartsGame {
 					// adds each card to the trick array
 					trick[cpi] = current;
 					if((current.compareTo(trick[highCard]) > 0) && (current.getSuit() == leadingSuit))
-							highCard = cpi;
+						highCard = cpi;
 				}
 			}
 			
@@ -210,6 +221,8 @@ public class HeartsGame {
 				if(i != moonShotPlayer)
 					players[i].addPoints(26);
 			}
+			System.out.println("Scores for this round: ");
+			printScores();
 		}
 		else if (moonShot == false) {
 			System.out.println("Scores for this round: ");
@@ -224,7 +237,7 @@ public class HeartsGame {
 		boolean hundredReached = false;
 		winner = 0;
 		for(int i = 0; (i < 4) && (hundredReached == false); i++) {
-			if(players[i].getScore() >= 100)
+			if(players[i].getScore() >= 30)
 				hundredReached = true;
 		}
 		return hundredReached;
